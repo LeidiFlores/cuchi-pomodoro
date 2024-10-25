@@ -18,7 +18,7 @@
 <style scoped>
 .spotify-player {
   position: absolute;
-  bottom: 20px;
+  bottom: 10px;
   right: 20px;
   z-index: 100;
 }
