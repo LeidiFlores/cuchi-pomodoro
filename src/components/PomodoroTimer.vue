@@ -5,12 +5,10 @@ const originalTitle = document.title;
 const props = defineProps({
   initialWorkTime: {
     type: Number,
-    required: true,
     default: 25 * 60, // 25 minutes in seconds
   },
   initialBreakTime: {
     type: Number,
-    required: true,
     default: 5 * 60, // 5 minutes in seconds
   },
   soundEnabled: {
@@ -57,6 +55,8 @@ const resumeTimer = () => {
 }
 
 const switchTimerMode = () => {
+  clearInterval(timerInterval)
+  timerRunning.value = false
   isWorkTime.value = !isWorkTime.value
   timeLeft.value = isWorkTime.value
     ? props.initialWorkTime
