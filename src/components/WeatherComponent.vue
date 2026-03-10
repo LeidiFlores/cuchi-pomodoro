@@ -23,7 +23,7 @@ export default {
   data() {
     return {
       // OpenWeatherMap API key
-      apiKey: 'f5b50e22b26702e634d096fa61e393ff',
+      apiKey: import.meta.env.VITE_WEATHER_API_KEY,
       // Default city
       city: 'Boston',
       weatherData: null,
