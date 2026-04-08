@@ -1,17 +1,18 @@
 @import './base.css';
 
 #app {
+  width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: clamp(1rem, 2vw, 2.5rem);
   font-weight: normal;
 }
 
 body {
-  background-image: url('https://wartonnosound.com/wp-content/uploads/2023/05/Blog-Post-image-for-lofi-music-and-relaxing.jpg'); /* Adjust the path as necessary */
-  background-size: cover; /* Ensures the image covers the entire background */
-  background-position: center; /* Centers the background image */
-  background-repeat: no-repeat; /* Prevents the background image from repeating */
+  background-image: url('https://wartonnosound.com/wp-content/uploads/2023/05/Blog-Post-image-for-lofi-music-and-relaxing.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 a,
@@ -23,10 +24,13 @@ a,
 }
 
 .footer-about {
-  width: 100vw;
-  padding: 0 24px;
-  position: absolute;
-  bottom: 30px;
+  width: 100%;
+  max-width: 100%;
+  left: 0;
+  right: 0;
+  padding: 0 clamp(1rem, 4vw, 2rem);
+  position: fixed;
+  bottom: 0;
   text-align: center;
   background-color: rgba(0, 0, 0, 0.4);
 }
@@ -56,12 +60,14 @@ button:hover {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  min-height: 80vh;
   text-align: center;
-  height: 400px;
-  width: 600px;
-  border-radius: 10%;
-  margin-left: 300px;
+  width: min(90vw, 620px);
+  max-width: 100%;
+  padding: 2rem 1.5rem 6rem;
+  border-radius: 1.25rem;
+  margin: 0 auto;
+  gap: 1.25rem;
 }
 
 @media (hover: hover) {
@@ -70,15 +76,36 @@ button:hover {
   }
 }
 
+@media (max-width: 768px) {
+  #app {
+    padding: 1rem 0.75rem;
+  }
+
+  .body-container {
+    width: min(100%, 620px);
+    min-height: auto;
+    justify-content: flex-start;
+    padding: 1rem 0.75rem 1.25rem;
+    gap: 0.9rem;
+  }
+
+  .footer-about {
+    position: static;
+    margin-top: 0.75rem;
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+}
+
 @media (min-width: 1024px) {
   body {
     display: flex;
-    place-items: center;
+    align-items: center;
+    justify-content: center;
   }
 
   #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    justify-content: center;
     padding: 0 2rem;
   }
 }
