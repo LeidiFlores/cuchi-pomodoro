@@ -1,15 +1,16 @@
 <script setup>
-import { ref, watch, onUnmounted, computed } from 'vue'
+import { ref, watch, onUnmounted, onMounted, computed } from 'vue'
 
 const originalTitle = document.title;
+
 const props = defineProps({
   initialWorkTime: {
     type: Number,
-    default: 25 * 60, // 25 minutes in seconds
+    default: 25 * 60,
   },
   initialBreakTime: {
     type: Number,
-    default: 5 * 60, // 5 minutes in seconds
+    default: 5 * 60,
   },
   soundEnabled: {
     type: Boolean,
@@ -17,10 +18,10 @@ const props = defineProps({
   },
 })
 
-const timeLeft = ref(props.initialWorkTime) // Start with work time
+const timeLeft = ref(props.initialWorkTime)
 const timerRunning = ref(false)
 let timerInterval
-const isWorkTime = ref(true) // Keep track of work/break state
+const isWorkTime = ref(true)
 
 const tickingBellSound = new Audio('/sound/timer-with-chime.mp3')
 
@@ -38,7 +39,7 @@ const startTimer = () => {
     if (timeLeft.value <= 0) {
       clearInterval(timerInterval)
       timerRunning.value = false
-      switchTimerMode() // Switch between work and break time
+      switchTimerMode()
     }
   }, 1000)
 }
@@ -79,30 +80,66 @@ const formattedTime = computed(() => {
 
 watch([formattedTime, timerRunning], ([newTime, running]) => {
   if (running) {
-    document.title = timeLeft.value > 0 ? `${newTime} - ${originalTitle}` : `Time's up! - ${originalTitle}`
+    document.title =
+      timeLeft.value > 0
+        ? `${newTime} - ${originalTitle}`
+        : `Time's up! - ${originalTitle}`
   } else {
     document.title = originalTitle
   }
 })
 
+/* 🔥 KEYBOARD SHORTCUT (FIXED) */
+const handleKeydown = (e) => {
+  const tag = document.activeElement.tagName
+
+  // Don't trigger while typing
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return
+
+  // ✅ FIX: prevent hold key spam
+  if (e.repeat) return
+
+  if (e.code === 'Space') {
+    e.preventDefault()
+
+    if (timerRunning.value) {
+      stopTimer()
+    } else {
+      resumeTimer()
+    }
+  }
+}
+
+/* 🔥 LIFECYCLE */
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown)
+})
+
 onUnmounted(() => {
   clearInterval(timerInterval)
-  // Restore the original title when the component is unmounted
   document.title = originalTitle
+  window.removeEventListener('keydown', handleKeydown)
 })
 </script>
 
 <template>
   <div class="counter">
     <div>{{ isWorkTime ? 'Work Time' : 'Break Time' }}</div>
-    <div v-if="timeLeft > 0">{{ minutes }}:{{ seconds }}</div>
+
+    <div v-if="timeLeft > 0">
+      {{ minutes }}:{{ seconds }}
+    </div>
+
     <div v-else>¡Time for a break!</div>
+
     <button class="button" @click="startTimer" :disabled="timerRunning">
       Start
     </button>
+
     <button class="button" @click="switchTimerMode">
       {{ isWorkTime ? 'Skip to Break' : 'Skip to Work' }}
     </button>
+
     <button class="button" @click="timerRunning ? stopTimer() : resumeTimer()">
       {{ timerRunning ? 'Stop' : 'Resume' }}
     </button>
@@ -118,21 +155,16 @@ onUnmounted(() => {
   border-radius: 0.5rem;
 }
 
-/* dark mode */
 .dark-mode .counter {
   color: rgb(204, 190, 190);
   background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 0.5rem;
 }
 
-/* dark mode */
 .dark-mode .button {
   background-color: rgb(126, 142, 97);
 }
 
-/* hover effect */
 .button:hover {
   background-color: rgb(78, 102, 58);
 }
-
 </style>
