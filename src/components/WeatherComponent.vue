@@ -18,37 +18,29 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      // OpenWeatherMap API key
-      apiKey: import.meta.env.VITE_WEATHER_API_KEY,
-      // Default city
-      city: 'Boston',
-      weatherData: null,
-      loading: true,
-      error: null,
-    }
-  },
-  methods: {
-    async fetchWeather() {
-      const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${this.city}&appid=${this.apiKey}&units=metric`
-      try {
-        const response = await fetch(apiUrl)
-        if (!response.ok) throw new Error('Failed to fetch weather data.')
-        this.weatherData = await response.json()
-      } catch (err) {
-        this.error = err.message
-      } finally {
-        this.loading = false
-      }
-    },
-  },
-  mounted() {
-    this.fetchWeather()
-  },
+<script setup>
+import { ref, onMounted } from 'vue'
+
+const apiKey = import.meta.env.VITE_WEATHER_API_KEY
+const city = ref('Boston')
+const weatherData = ref(null)
+const loading = ref(true)
+const error = ref(null)
+
+async function fetchWeather() {
+  const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&appid=${apiKey}&units=metric`
+  try {
+    const response = await fetch(apiUrl)
+    if (!response.ok) throw new Error('Failed to fetch weather data.')
+    weatherData.value = await response.json()
+  } catch (err) {
+    error.value = err.message
+  } finally {
+    loading.value = false
+  }
 }
+
+onMounted(fetchWeather)
 </script>
 
 <style scoped>
