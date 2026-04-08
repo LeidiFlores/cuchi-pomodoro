@@ -58,8 +58,8 @@ export default {
   position: absolute;
   bottom: 90px;
   left: 20px;
-  width: 200px;
-  height: 150px;
+  width: min(90vw, 240px);
+  max-width: 240px;
   border-radius: 15px;
   padding: 10px;
   font-size: 12px;
@@ -80,5 +80,22 @@ p {
   position: absolute;
   right: 5px;
   bottom: 110px;
+}
+
+@media (max-width: 768px) {
+  .weather-widget {
+    position: static;
+    width: 100%;
+    max-width: 100%;
+    margin: 1rem 0 0;
+    bottom: auto;
+    left: auto;
+  }
+
+  .weather-icon {
+    position: static;
+    float: right;
+    margin: 0 0 0 0.75rem;
+  }
 }
 </style>
