@@ -61,3 +61,13 @@
     border-radius: 24px;
   }
   
+@media (max-width: 768px) {
+  .toggle-container {
+    position: static;
+    top: auto;
+    right: auto;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 0.25rem;
+  }
+}

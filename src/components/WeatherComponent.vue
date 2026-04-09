@@ -18,37 +18,29 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      // OpenWeatherMap API key
-      apiKey: import.meta.env.VITE_WEATHER_API_KEY,
-      // Default city
-      city: 'Boston',
-      weatherData: null,
-      loading: true,
-      error: null,
-    }
-  },
-  methods: {
-    async fetchWeather() {
-      const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${this.city}&appid=${this.apiKey}&units=metric`
-      try {
-        const response = await fetch(apiUrl)
-        if (!response.ok) throw new Error('Failed to fetch weather data.')
-        this.weatherData = await response.json()
-      } catch (err) {
-        this.error = err.message
-      } finally {
-        this.loading = false
-      }
-    },
-  },
-  mounted() {
-    this.fetchWeather()
-  },
+<script setup>
+import { ref, onMounted } from 'vue'
+
+const apiKey = import.meta.env.VITE_WEATHER_API_KEY
+const city = ref('Boston')
+const weatherData = ref(null)
+const loading = ref(true)
+const error = ref(null)
+
+async function fetchWeather() {
+  const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&appid=${apiKey}&units=metric`
+  try {
+    const response = await fetch(apiUrl)
+    if (!response.ok) throw new Error('Failed to fetch weather data.')
+    weatherData.value = await response.json()
+  } catch (err) {
+    error.value = err.message
+  } finally {
+    loading.value = false
+  }
 }
+
+onMounted(fetchWeather)
 </script>
 
 <style scoped>
@@ -58,8 +50,8 @@ export default {
   position: absolute;
   bottom: 90px;
   left: 20px;
-  width: 200px;
-  height: 150px;
+  width: min(90vw, 240px);
+  max-width: 240px;
   border-radius: 15px;
   padding: 10px;
   font-size: 12px;
@@ -80,5 +72,22 @@ p {
   position: absolute;
   right: 5px;
   bottom: 110px;
+}
+
+@media (max-width: 768px) {
+  .weather-widget {
+    position: static;
+    width: 100%;
+    max-width: 100%;
+    margin: 1rem 0 0;
+    bottom: auto;
+    left: auto;
+  }
+
+  .weather-icon {
+    position: static;
+    float: right;
+    margin: 0 0 0 0.75rem;
+  }
 }
 </style>

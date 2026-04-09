@@ -102,11 +102,9 @@ body {
 body {
   margin: 0;
   padding: 0;
-  overflow: hidden;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: linear-gradient(45deg, #f3ec78, #af4261, #f3e6e7, #36c8a7);
   background-size: 800% 800%;
   animation: gradientAnimation 10s ease infinite;

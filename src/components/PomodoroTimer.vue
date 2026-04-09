@@ -20,16 +20,23 @@ const props = defineProps({
 
 const timeLeft = ref(props.initialWorkTime)
 const timerRunning = ref(false)
-let timerInterval
-const isWorkTime = ref(true)
+const timerInterval = ref(null)
+const isWorkTime = ref(true) // Keep track of work/break state
 
 const tickingBellSound = new Audio('/sound/timer-with-chime.mp3')
+
+const clearTimer = () => {
+  if (timerInterval.value !== null) {
+    clearInterval(timerInterval.value)
+    timerInterval.value = null
+  }
+}
 
 const startTimer = () => {
   if (timerRunning.value) return
 
   timerRunning.value = true
-  timerInterval = setInterval(() => {
+  timerInterval.value = setInterval(() => {
     timeLeft.value--
 
     if (timeLeft.value === 11 && props.soundEnabled) {
@@ -37,7 +44,7 @@ const startTimer = () => {
     }
 
     if (timeLeft.value <= 0) {
-      clearInterval(timerInterval)
+      clearTimer()
       timerRunning.value = false
       switchTimerMode()
     }
@@ -45,7 +52,7 @@ const startTimer = () => {
 }
 
 const stopTimer = () => {
-  clearInterval(timerInterval)
+  clearTimer()
   timerRunning.value = false
 }
 
@@ -56,7 +63,7 @@ const resumeTimer = () => {
 }
 
 const switchTimerMode = () => {
-  clearInterval(timerInterval)
+  clearTimer()
   timerRunning.value = false
   isWorkTime.value = !isWorkTime.value
   timeLeft.value = isWorkTime.value
@@ -116,7 +123,8 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  clearInterval(timerInterval)
+  clearTimer()
+  // Restore the original title when the component is unmounted
   document.title = originalTitle
   window.removeEventListener('keydown', handleKeydown)
 })

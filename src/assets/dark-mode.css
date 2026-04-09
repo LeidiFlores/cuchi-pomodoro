@@ -23,14 +23,16 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    min-height: 80vh;
     text-align: center;
     color: #cbcbcb;
     background-color: rgba(0, 0, 0, 0.5);
-    height: 400px;
-    width: 600px;
-    border-radius: 10%;
-    margin-left: 300px;
+    width: min(90vw, 620px);
+    max-width: 100%;
+    padding: 2rem 1.5rem;
+    border-radius: 1.25rem;
+    margin: 0 auto;
+    gap: 1.25rem;
 }
 
 .dark-mode button {
@@ -46,19 +48,4 @@
 
 .dark-mode button:hover {
     background-color: rgb(78, 102, 58);
-}
-
-.body-container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    text-align: center;
-    color: #4e663a;
-    background-color: rgba(255, 255, 255, 0.5);
-    height: 400px;
-    width: 600px;
-    border-radius: 10%;
-    margin-left: 300px;
 }
