@@ -21,7 +21,17 @@
       <p>Condition: {{ weatherData.weather[0].description }}</p>
       <p>Humidity: {{ weatherData.main.humidity }}%</p>
       <p>Wind Speed: {{ weatherData.wind.speed }} m/s</p>
+      <input
+  type="text"
+  value={city}
+  onChange={(e) => {
+    setCity(e.target.value);
+    localStorage.setItem("weatherCity", e.target.value);
+  }}
+  placeholder="Enter city"
+/>
     </div>
+    
   </div>
 </template>
 
@@ -33,7 +43,9 @@ const city = ref('Boston')
 const weatherData = ref(null)
 const loading = ref(true)
 const error = ref(null)
-
+const [city, setCity] = useState(
+  localStorage.getItem("weatherCity") || "Boston"
+);
 async function fetchWeather() {
   if (!apiKey) {
     error.value = 'Weather API key is missing. Please check your environment variables.'
