@@ -29,8 +29,11 @@
 import { ref, onMounted } from 'vue'
 
 const apiKey = import.meta.env.VITE_WEATHER_API_KEY
-const city = ref('Boston')
-const weatherData = ref(null)
+import { useState, useEffect } from "react";
+
+const [city, setCity] = useState(
+  localStorage.getItem("weatherCity") || "Boston"
+);const weatherData = ref(null)
 const loading = ref(true)
 const error = ref(null)
 
