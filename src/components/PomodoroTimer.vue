@@ -1,5 +1,6 @@
 <script setup>
-import { ref, watch, onUnmounted, onMounted, computed } from 'vue'
+import { ref, watch, onUnmounted, computed } from 'vue'
+import tickingBellUrl from '@/assets/sound/timer-with-chime.mp3'
 
 const originalTitle = document.title;
 
@@ -23,7 +24,7 @@ const timerRunning = ref(false)
 const timerInterval = ref(null)
 const isWorkTime = ref(true) // Keep track of work/break state
 
-const tickingBellSound = new Audio('/sound/timer-with-chime.mp3')
+const tickingBellSound = new Audio(tickingBellUrl)
 
 const clearTimer = () => {
   if (timerInterval.value !== null) {
