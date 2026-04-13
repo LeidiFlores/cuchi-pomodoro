@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onUnmounted, computed } from 'vue'
+import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import tickingBellUrl from '@/assets/sound/timer-with-chime.mp3'
 
 const originalTitle = document.title;
@@ -97,15 +97,19 @@ watch([formattedTime, timerRunning], ([newTime, running]) => {
   }
 })
 
-/* 🔥 KEYBOARD SHORTCUT (FIXED) */
 const handleKeydown = (e) => {
-  const tag = document.activeElement.tagName
+  const activeElement = document.activeElement
+  const tag = activeElement?.tagName
+  const isInteractive =
+    activeElement?.isContentEditable ||
+    tag === 'INPUT' ||
+    tag === 'TEXTAREA' ||
+    tag === 'BUTTON' ||
+    tag === 'SELECT' ||
+    tag === 'OPTION' ||
+    activeElement?.getAttribute('role') === 'button'
 
-  // Don't trigger while typing
-  if (tag === 'INPUT' || tag === 'TEXTAREA') return
-
-  // ✅ FIX: prevent hold key spam
-  if (e.repeat) return
+  if (isInteractive || e.repeat) return
 
   if (e.code === 'Space') {
     e.preventDefault()
@@ -118,7 +122,6 @@ const handleKeydown = (e) => {
   }
 }
 
-/* 🔥 LIFECYCLE */
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown)
 })
@@ -176,4 +179,5 @@ onUnmounted(() => {
 .button:hover {
   background-color: rgb(78, 102, 58);
 }
+
 </style>

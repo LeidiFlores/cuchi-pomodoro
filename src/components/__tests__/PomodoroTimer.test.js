@@ -94,4 +94,34 @@ describe('PomodoroTimer', () => {
     expect(screen.getByText('00:30')).toBeDefined()
     expect(screen.getByText('Break Time')).toBeDefined()
   })
+
+  it('should toggle the timer when Space is pressed', async () => {
+    render(PomodoroTimer, {
+      props: { initialWorkTime: 10, initialBreakTime: 5 },
+    })
+
+    await fireEvent.keyDown(window, { code: 'Space' })
+    await vi.advanceTimersByTimeAsync(3000)
+
+    expect(screen.getByText('00:07')).toBeDefined()
+
+    await fireEvent.keyDown(window, { code: 'Space' })
+    await vi.advanceTimersByTimeAsync(3000)
+
+    expect(screen.getByText('00:07')).toBeDefined()
+  })
+
+  it('should ignore Space when a button is focused', async () => {
+    render(PomodoroTimer, {
+      props: { initialWorkTime: 10, initialBreakTime: 5 },
+    })
+
+    const startButton = screen.getByRole('button', { name: /Start/i })
+    startButton.focus()
+
+    await fireEvent.keyDown(window, { code: 'Space' })
+    await vi.advanceTimersByTimeAsync(3000)
+
+    expect(screen.getByText('00:10')).toBeDefined()
+  })
 })
