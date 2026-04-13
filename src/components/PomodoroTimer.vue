@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onUnmounted, computed } from 'vue'
+import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import tickingBellUrl from '@/assets/sound/timer-with-chime.mp3'
 
 const originalTitle = document.title;
@@ -93,10 +93,40 @@ watch([formattedTime, timerRunning], ([newTime, running]) => {
   }
 })
 
+const handleKeydown = (e) => {
+  const activeElement = document.activeElement
+  const tag = activeElement?.tagName
+  const isInteractive =
+    activeElement?.isContentEditable ||
+    tag === 'INPUT' ||
+    tag === 'TEXTAREA' ||
+    tag === 'BUTTON' ||
+    tag === 'SELECT' ||
+    tag === 'OPTION' ||
+    activeElement?.getAttribute('role') === 'button'
+
+  if (isInteractive || e.repeat) return
+
+  if (e.code === 'Space') {
+    e.preventDefault()
+
+    if (timerRunning.value) {
+      stopTimer()
+    } else {
+      resumeTimer()
+    }
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown)
+})
+
 onUnmounted(() => {
   clearTimer()
   // Restore the original title when the component is unmounted
   document.title = originalTitle
+  window.removeEventListener('keydown', handleKeydown)
 })
 </script>
 
@@ -142,5 +172,4 @@ onUnmounted(() => {
 .button:hover {
   background-color: rgb(78, 102, 58);
 }
-
 </style>
