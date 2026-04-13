@@ -3,14 +3,15 @@ import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import tickingBellUrl from '@/assets/sound/timer-with-chime.mp3'
 
 const originalTitle = document.title;
+
 const props = defineProps({
   initialWorkTime: {
     type: Number,
-    default: 25 * 60, // 25 minutes in seconds
+    default: 25 * 60,
   },
   initialBreakTime: {
     type: Number,
-    default: 5 * 60, // 5 minutes in seconds
+    default: 5 * 60,
   },
   soundEnabled: {
     type: Boolean,
@@ -18,7 +19,7 @@ const props = defineProps({
   },
 })
 
-const timeLeft = ref(props.initialWorkTime) // Start with work time
+const timeLeft = ref(props.initialWorkTime)
 const timerRunning = ref(false)
 const timerInterval = ref(null)
 const isWorkTime = ref(true) // Keep track of work/break state
@@ -46,7 +47,7 @@ const startTimer = () => {
     if (timeLeft.value <= 0) {
       clearTimer()
       timerRunning.value = false
-      switchTimerMode() // Switch between work and break time
+      switchTimerMode()
     }
   }, 1000)
 }
@@ -87,7 +88,10 @@ const formattedTime = computed(() => {
 
 watch([formattedTime, timerRunning], ([newTime, running]) => {
   if (running) {
-    document.title = timeLeft.value > 0 ? `${newTime} - ${originalTitle}` : `Time's up! - ${originalTitle}`
+    document.title =
+      timeLeft.value > 0
+        ? `${newTime} - ${originalTitle}`
+        : `Time's up! - ${originalTitle}`
   } else {
     document.title = originalTitle
   }
@@ -133,14 +137,21 @@ onUnmounted(() => {
 <template>
   <div class="counter">
     <div>{{ isWorkTime ? 'Work Time' : 'Break Time' }}</div>
-    <div v-if="timeLeft > 0">{{ minutes }}:{{ seconds }}</div>
+
+    <div v-if="timeLeft > 0">
+      {{ minutes }}:{{ seconds }}
+    </div>
+
     <div v-else>¡Time for a break!</div>
+
     <button class="button" @click="startTimer" :disabled="timerRunning">
       Start
     </button>
+
     <button class="button" @click="switchTimerMode">
       {{ isWorkTime ? 'Skip to Break' : 'Skip to Work' }}
     </button>
+
     <button class="button" @click="timerRunning ? stopTimer() : resumeTimer()">
       {{ timerRunning ? 'Stop' : 'Resume' }}
     </button>
@@ -156,20 +167,17 @@ onUnmounted(() => {
   border-radius: 0.5rem;
 }
 
-/* dark mode */
 .dark-mode .counter {
   color: rgb(204, 190, 190);
   background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 0.5rem;
 }
 
-/* dark mode */
 .dark-mode .button {
   background-color: rgb(126, 142, 97);
 }
 
-/* hover effect */
 .button:hover {
   background-color: rgb(78, 102, 58);
 }
+
 </style>
