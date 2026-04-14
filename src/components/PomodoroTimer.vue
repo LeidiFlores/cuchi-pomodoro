@@ -2,19 +2,17 @@
 import { ref, watch, onUnmounted, computed } from 'vue'
 import tickingBellUrl from '@/assets/sound/timer-with-chime.mp3'
 
-const WORK_DURATION_SECONDS = 25 * 60
-const BREAK_DURATION_SECONDS = 5 * 60
 const CHIME_TRIGGER_SECONDS = 11
 
 const originalTitle = document.title;
 const props = defineProps({
   initialWorkTime: {
     type: Number,
-    default: WORK_DURATION_SECONDS,
+    default: 25 * 60,
   },
   initialBreakTime: {
     type: Number,
-    default: BREAK_DURATION_SECONDS,
+    default: 5 * 60,
   },
   soundEnabled: {
     type: Boolean,
