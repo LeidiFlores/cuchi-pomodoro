@@ -2,6 +2,8 @@
 import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import tickingBellUrl from '@/assets/sound/timer-with-chime.mp3'
 
+const CHIME_TRIGGER_SECONDS = 11
+
 const originalTitle = document.title;
 
 const props = defineProps({
@@ -40,7 +42,7 @@ const startTimer = () => {
   timerInterval.value = setInterval(() => {
     timeLeft.value--
 
-    if (timeLeft.value === 11 && props.soundEnabled) {
+    if (timeLeft.value === CHIME_TRIGGER_SECONDS && props.soundEnabled) {
       tickingBellSound.play()
     }
 
