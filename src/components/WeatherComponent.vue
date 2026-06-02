@@ -14,7 +14,7 @@
     <div v-else-if="weatherData">
       <img
         class="weather-icon"
-        :src="`http://openweathermap.org/img/wn/${weatherData.weather[0].icon}.png`"
+        :src="`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}.png`"
         :alt="weatherData.weather[0].description"
       />
       <p>Temperature: {{ weatherData.main.temp }}°C</p>
