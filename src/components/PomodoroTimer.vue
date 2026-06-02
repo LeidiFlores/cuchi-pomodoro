@@ -3,8 +3,9 @@ import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import tickingBellUrl from '@/assets/sound/timer-with-chime.mp3'
 
 const CHIME_TRIGGER_SECONDS = 11
+const FINISHED_MESSAGE_DELAY_MS = 3000
 
-const originalTitle = document.title;
+const originalTitle = document.title
 
 const props = defineProps({
   initialWorkTime: {
@@ -24,6 +25,8 @@ const props = defineProps({
 const timeLeft = ref(props.initialWorkTime)
 const timerRunning = ref(false)
 const timerInterval = ref(null)
+const modeSwitchTimeout = ref(null)
+const isFinished = ref(false)
 const isWorkTime = ref(true) // Keep track of work/break state
 
 const tickingBellSound = new Audio(tickingBellUrl)
@@ -35,9 +38,18 @@ const clearTimer = () => {
   }
 }
 
+const clearModeSwitchTimeout = () => {
+  if (modeSwitchTimeout.value !== null) {
+    clearTimeout(modeSwitchTimeout.value)
+    modeSwitchTimeout.value = null
+  }
+}
+
 const startTimer = () => {
   if (timerRunning.value) return
 
+  clearModeSwitchTimeout()
+  isFinished.value = false
   timerRunning.value = true
   timerInterval.value = setInterval(() => {
     timeLeft.value--
@@ -49,13 +61,17 @@ const startTimer = () => {
     if (timeLeft.value <= 0) {
       clearTimer()
       timerRunning.value = false
-      switchTimerMode()
+      isFinished.value = true
+      modeSwitchTimeout.value = setTimeout(() => {
+        switchTimerMode()
+      }, FINISHED_MESSAGE_DELAY_MS)
     }
   }, 1000)
 }
 
 const stopTimer = () => {
   clearTimer()
+  clearModeSwitchTimeout()
   timerRunning.value = false
 }
 
@@ -67,7 +83,9 @@ const resumeTimer = () => {
 
 const switchTimerMode = () => {
   clearTimer()
+  clearModeSwitchTimeout()
   timerRunning.value = false
+  isFinished.value = false
   isWorkTime.value = !isWorkTime.value
   timeLeft.value = isWorkTime.value
     ? props.initialWorkTime
@@ -86,6 +104,10 @@ const seconds = computed(() => {
 
 const formattedTime = computed(() => {
   return `${minutes.value}:${seconds.value}`
+})
+
+const finishedMessage = computed(() => {
+  return isWorkTime.value ? '¡Time for a break!' : 'Time to focus!'
 })
 
 watch([formattedTime, timerRunning], ([newTime, running]) => {
@@ -130,6 +152,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   clearTimer()
+  clearModeSwitchTimeout()
   // Restore the original title when the component is unmounted
   document.title = originalTitle
   window.removeEventListener('keydown', handleKeydown)
@@ -140,13 +163,17 @@ onUnmounted(() => {
   <div class="counter">
     <div>{{ isWorkTime ? 'Work Time' : 'Break Time' }}</div>
 
-    <div v-if="timeLeft > 0">
+    <div v-if="!isFinished && timeLeft > 0">
       {{ minutes }}:{{ seconds }}
     </div>
 
-    <div v-else>¡Time for a break!</div>
+    <div v-else>{{ finishedMessage }}</div>
 
-    <button class="button" @click="startTimer" :disabled="timerRunning">
+    <button
+      class="button"
+      @click="startTimer"
+      :disabled="timerRunning || isFinished || timeLeft <= 0"
+    >
       Start
     </button>
 

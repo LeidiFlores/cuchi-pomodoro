@@ -69,15 +69,21 @@ describe('PomodoroTimer', () => {
     expect(screen.getByText('00:57')).toBeDefined()
   })
 
-  it('should switch to Break Time when timer reaches zero', async () => {
+  it('should show a finished message before switching to Break Time', async () => {
     render(PomodoroTimer, {
       props: { initialWorkTime: 2, initialBreakTime: 5 },
     })
 
     fireEvent.click(screen.getByRole('button', { name: /Start/i }))
+    await vi.advanceTimersByTimeAsync(2000)
+
+    expect(screen.getByText('¡Time for a break!')).toBeDefined()
+    expect(screen.getByRole('button', { name: /Start/i }).disabled).toBe(true)
+
     await vi.advanceTimersByTimeAsync(3000)
 
     expect(screen.getByText('Break Time')).toBeDefined()
+    expect(screen.getByText('00:05')).toBeDefined()
   })
 
   it('should reset timer correctly when Skip is clicked', async () => {
